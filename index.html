@@ -56,16 +56,21 @@
     /* Particle effect */
     .particles{position:fixed;inset:0;z-index:1;pointer-events:none}
     .particle{
-      position:absolute;width:2px;height:2px;
-      background:rgba(255,255,255,0.3);border-radius:50%;
-      animation:particleFloat 15s linear infinite;
+      position:absolute;border-radius:50%;
+      background:rgba(255,255,255,0.45);
+      box-shadow:0 0 8px rgba(255,255,255,0.18);
+      will-change:transform,opacity;
+      /* size and animation are set inline for variety */
+      animation-name:particleFloat;
+      animation-timing-function:linear;
+      animation-iteration-count:infinite;
     }
 
     @keyframes particleFloat{
-      0%{transform:translateY(100vh) translateX(0);opacity:0}
-      10%{opacity:0.3}
-      90%{opacity:0.1}
-      100%{transform:translateY(-100vh) translateX(50px);opacity:0}
+      0%{transform:translateY(110vh) translateX(0);opacity:0}
+      8%{opacity:0.6}
+      70%{opacity:0.25}
+      100%{transform:translateY(-110vh) translateX(60px);opacity:0}
     }
 
     @keyframes floatA{
@@ -453,14 +458,39 @@
     // Create floating particles
     (function createParticles(){
       const container = document.getElementById('particles');
-      const particleCount = 30;
-      
+      // increase particle count but be conservative on small devices
+      const isMobile = window.innerWidth <= 480;
+      const particleCount = isMobile ? 20 : 90;
+
+      // clear any existing particles (safe to call multiple times)
+      container.innerHTML = '';
+
       for(let i = 0; i < particleCount; i++){
         const particle = document.createElement('div');
         particle.className = 'particle';
+
+        // randomized horizontal position
         particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 15 + 's';
-        particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+
+        // varied sizes for depth
+        const size = Math.floor(2 + Math.random() * (isMobile ? 6 : 12)); // 2-12px
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+
+        // varied opacity for visual depth
+        const opacity = (0.2 + Math.random() * 0.6).toFixed(2);
+        particle.style.opacity = opacity;
+
+        // varied animation duration and staggered delay
+        const duration = (8 + Math.random() * 18).toFixed(1); // 8s - 26s
+        const delay = (-Math.random() * duration).toFixed(2); // negative to spread initial positions
+        particle.style.animationDuration = duration + 's';
+        particle.style.animationDelay = delay + 's';
+
+        // slight horizontal variance per particle using CSS transform translateX in keyframes; we also add a CSS variable for extra random offset
+        const offsetX = Math.floor(-40 + Math.random() * 80); // -40 to 40px
+        particle.style.setProperty('--px-offset', offsetX + 'px');
+
         container.appendChild(particle);
       }
     })();
