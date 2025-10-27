@@ -7,6 +7,8 @@
   <title>Holborn Clothing — Coming Soon</title>
   <meta name="description" content="Holborn Clothing — premium streetwear. Scan the product QR, sign up for launch updates and follow us on social media.">
   <meta name="theme-color" content="#0a0a0a">
+  <!-- Set to your deployed API base (e.g. https://api.example.com). Leave empty to use same origin -->
+  <meta name="api-base" content="">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     
@@ -427,7 +429,7 @@
         <p class="lead reveal d3">We're launching our full e‑commerce store soon. Scan your tag to learn more and sign up below to get notified on launch day.</p>
 
         <div class="notify reveal d4">
-          <form id="notifyForm" class="form-row" onsubmit="return handleSubmit(event)">
+          <form id="notifyForm" class="form-row" action="https://formspree.io/f/meopejrd" method="POST" onsubmit="return handleSubmit(event)">
             <input id="emailInput" class="email" type="email" name="email" placeholder="Enter your email address" aria-label="Email address" required>
             <button class="cta" type="submit">Notify Me</button>
           </form>
@@ -495,22 +497,21 @@
       }
     })();
 
-    // Enhanced form submission with better validation
-    function handleSubmit(e){
+    // Enhanced form submission with server integration
+    async function handleSubmit(e){
       e.preventDefault();
       const btn = e.target.querySelector('.cta');
       const emailInput = document.getElementById('emailInput');
       const email = emailInput.value.trim();
       const successMsg = document.getElementById('success');
       const errorMsg = document.getElementById('error');
-      
+
       // Hide any previous messages
       successMsg.classList.remove('show');
       errorMsg.classList.remove('show');
-      
+
       if(!email) return false;
-      
-      // Enhanced email validation
+
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if(!emailRegex.test(email)){
         errorMsg.textContent = '✗ Please enter a valid email address.';
@@ -519,36 +520,61 @@
         return false;
       }
 
-      // Disable button during submission
       btn.disabled = true;
       btn.textContent = 'Submitting...';
 
-      // TODO: Replace with actual API endpoint
-      // Example: fetch('/api/subscribe', { method: 'POST', body: JSON.stringify({email}) })
-      
-      // Simulate API call
-      setTimeout(() => {
-        // Simulate random success/failure for demo
-        const success = true; // Change to test error handling
-        
-        if(success){
+      // API base is configurable via a meta tag so the static site can be
+      // hosted separately from the API (e.g. GitHub Pages + Render).
+      const API_BASE = (document.querySelector('meta[name="api-base"]') || {content:''}).content.trim();
+
+      // Get product param if present
+      const params = new URLSearchParams(location.search);
+      const product = params.get('product') || null;
+      try{
+        const base = API_BASE.replace(/\/$/, '');
+
+        // If the form has an action (e.g. Formspree) prefer posting to that.
+        const form = document.getElementById('notifyForm');
+        const target = form && form.action ? form.action : (base ? base + '/api/subscribe' : '/api/subscribe');
+
+        let resp;
+        // If posting to an external form endpoint (Formspree) use FormData so
+        // the provider receives fields as a normal form submission.
+        if(form && form.action && form.action.startsWith('http')){
+          const fd = new FormData();
+          fd.append('email', email);
+          if(product) fd.append('product', product);
+          resp = await fetch(target, { method: 'POST', body: fd });
+        } else {
+          resp = await fetch(target, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, product })
+          });
+        }
+
+        if(!resp.ok){
+          const err = await resp.json().catch(()=>({message:'Server error'}));
+          throw new Error(err.message || 'Server error');
+        }
+
+        const data = await resp.json();
+        if(data && data.success){
           successMsg.classList.add('show');
           emailInput.value = '';
-          
-          // Track submission (replace with actual analytics)
-          console.log('Email submitted:', email);
-          
-          // Hide success message after 5 seconds
           setTimeout(() => successMsg.classList.remove('show'), 5000);
         } else {
-          errorMsg.textContent = '✗ Something went wrong. Please try again.';
-          errorMsg.classList.add('show');
-          setTimeout(() => errorMsg.classList.remove('show'), 5000);
+          throw new Error(data && data.message ? data.message : 'Subscription failed');
         }
-        
+      }catch(err){
+        console.error('Subscription error', err);
+        errorMsg.textContent = '✗ ' + (err.message || 'Something went wrong.');
+        errorMsg.classList.add('show');
+        setTimeout(() => errorMsg.classList.remove('show'), 5000);
+      }finally{
         btn.disabled = false;
         btn.textContent = 'Notify Me';
-      }, 800);
+      }
 
       return false;
     }
