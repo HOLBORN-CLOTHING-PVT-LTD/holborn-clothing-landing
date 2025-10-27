@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Holborn Clothing — Coming Soon</title>
+  <meta name="description" content="Holborn Clothing — premium streetwear. Scan the product QR, sign up for launch updates and follow us on social media.">
+  <meta name="theme-color" content="#0a0a0a">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    :root{
+      --bg:#0a0a0a;
+      --muted:#8f8f8f;
+      --red:#d32f2f;
+      --blue:#1565c0;
+      --glass: rgba(255,255,255,0.04);
+      --glass-strong: rgba(255,255,255,0.08);
+      --max-width:1100px;
+      --radius:999px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden}
+    body{
+      font-family:'Inter',system-ui,-apple-system,sans-serif;
+      background:var(--bg);color:#fff;line-height:1.6;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+      overflow:hidden;position:relative;
+    }
+
+    /* Enhanced background with particles */
+    .bg-blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+    .blob{
+      position:absolute;border-radius:50%;
+      filter:blur(80px);opacity:0.15;mix-blend-mode:screen;
+      will-change:transform;
+    }
+    .blob.a{
+      width:600px;height:600px;left:-250px;top:-180px;
+      background:radial-gradient(circle,var(--red),#b71c1c);
+      animation:floatA 20s ease-in-out infinite;
+    }
+    .blob.b{
+      width:500px;height:500px;right:-180px;bottom:-180px;
+      background:radial-gradient(circle,var(--blue),#0b3b91);
+      animation:floatB 28s ease-in-out infinite;
+    }
+    .blob.c{
+      width:350px;height:350px;right:15%;top:35%;
+      background:radial-gradient(circle,var(--red),var(--blue));
+      animation:floatC 24s ease-in-out infinite;
+    }
+
+    /* Particle effect */
+    .particles{position:fixed;inset:0;z-index:1;pointer-events:none}
+    .particle{
+      position:absolute;width:2px;height:2px;
+      background:rgba(255,255,255,0.3);border-radius:50%;
+      animation:particleFloat 15s linear infinite;
+    }
+
+    @keyframes particleFloat{
+      0%{transform:translateY(100vh) translateX(0);opacity:0}
+      10%{opacity:0.3}
+      90%{opacity:0.1}
+      100%{transform:translateY(-100vh) translateX(50px);opacity:0}
+    }
+
+    @keyframes floatA{
+      0%,100%{transform:translate(0,0) scale(1)}
+      33%{transform:translate(30px,-50px) scale(1.1)}
+      66%{transform:translate(-40px,30px) scale(0.95)}
+    }
+    @keyframes floatB{
+      0%,100%{transform:translate(0,0) scale(1)}
+      33%{transform:translate(-35px,60px) scale(1.05)}
+      66%{transform:translate(45px,-35px) scale(0.9)}
+    }
+    @keyframes floatC{
+      0%,100%{transform:translate(0,0) rotate(0deg) scale(1)}
+      50%{transform:translate(-25px,-40px) rotate(180deg) scale(1.15)}
+    }
+
+    /* Main layout */
+    /* ensure the page fills the viewport and doesn't scroll; content is scaled to fit */
+    .page{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      padding:40px 20px;position:relative;z-index:2;overflow:visible;
+    }
+    .shell{width:100%;max-width:var(--max-width);position:relative}
+
+    /* wrapper used to scale the content so the page never scrolls */
+    .scale-wrap{display:flex;align-items:center;justify-content:center;transform-origin:top center;width:100%}
+
+    /* Enhanced card with better glassmorphism */
+    .card{
+      position:relative;
+      background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(20px) saturate(180%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);
+      padding:60px 48px;border-radius:32px;
+      box-shadow:0 20px 60px rgba(0,0,0,0.8),
+                 inset 0 1px 0 rgba(255,255,255,0.1);
+      max-width:920px;margin:0 auto;text-align:center;
+      transform-style:preserve-3d;
+      transition:transform 0.3s ease;
+    }
+
+    .card::before{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(135deg,rgba(211,47,47,0.05),rgba(21,101,192,0.05));
+      border-radius:32px;z-index:-1;opacity:0;
+      transition:opacity 0.4s ease;
+    }
+
+    .card:hover::before{opacity:1}
+
+    /* Enhanced logo with glow effect */
+    .logo{
+      max-width:360px;margin:0 auto 40px;
+      filter:drop-shadow(0 0 40px rgba(211,47,47,0.3));
+      transition:filter 0.4s ease,transform 0.4s ease;
+    }
+    .logo:hover{
+      filter:drop-shadow(0 0 60px rgba(211,47,47,0.5));
+      transform:scale(1.02);
+    }
+    .logo img{display:block;width:100%;height:auto}
+
+    /* Typography enhancements */
+    .tag{
+      color:var(--muted);font-weight:600;margin-bottom:16px;
+      font-size:13px;letter-spacing:2px;text-transform:uppercase;
+      display:inline-block;
+      padding:8px 20px;
+      background:rgba(255,255,255,0.03);
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.05);
+    }
+
+    h1{
+      font-size:clamp(36px,7vw,72px);
+      margin:16px 0;font-weight:800;
+      background:linear-gradient(135deg,var(--red),var(--blue),var(--red));
+      background-size:200% 200%;
+      -webkit-background-clip:text;background-clip:text;
+      -webkit-text-fill-color:transparent;
+      letter-spacing:-0.02em;
+      animation:gradientShift 6s ease infinite;
+      position:relative;
+      display:inline-block;
+    }
+
+    h1::after{
+      content:'';position:absolute;bottom:-8px;left:50%;
+      transform:translateX(-50%);width:60%;height:3px;
+      background:linear-gradient(90deg,transparent,var(--red),var(--blue),transparent);
+      border-radius:999px;opacity:0.6;
+    }
+
+    @keyframes gradientShift{
+      0%,100%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+    }
+
+    .lead{
+      color:#c5c5c5;max-width:680px;margin:24px auto 40px;
+      font-size:17px;line-height:1.7;font-weight:400;
+    }
+
+    /* Enhanced form */
+    .notify{margin-top:32px}
+    .form-row{
+      display:flex;gap:14px;align-items:stretch;
+      justify-content:center;flex-wrap:wrap;
+      max-width:600px;margin:0 auto;
+    }
+    
+    .email{
+      flex:1;min-width:260px;padding:18px 26px;
+      border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.04);
+      color:#fff;font-size:15px;font-weight:500;
+      transition:all 0.3s ease;
+      outline:none;
+    }
+    
+    .email:focus{
+      border-color:var(--red);
+      background:rgba(255,255,255,0.08);
+      box-shadow:0 0 0 3px rgba(211,47,47,0.1),
+                 0 8px 24px rgba(0,0,0,0.3);
+      transform:translateY(-1px);
+    }
+
+    .email::placeholder{color:#666}
+
+    .cta{
+      padding:18px 36px;border-radius:var(--radius);border:none;
+      background:linear-gradient(135deg,var(--red),var(--blue));
+      background-size:200% 200%;
+      color:#fff;font-weight:700;cursor:pointer;
+      font-size:15px;letter-spacing:0.5px;
+      transition:all 0.3s ease;
+      box-shadow:0 8px 24px rgba(211,47,47,0.4);
+      position:relative;overflow:hidden;
+    }
+
+    .cta::before{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent);
+      transform:translateX(-100%);
+      transition:transform 0.5s ease;
+    }
+
+    .cta:hover{
+      transform:translateY(-2px);
+      box-shadow:0 12px 32px rgba(211,47,47,0.6);
+      background-position:100% 0;
+    }
+
+    .cta:hover::before{transform:translateX(100%)}
+    .cta:active{transform:translateY(0)}
+
+    /* Success message */
+    .success{
+      display:none;margin-top:20px;padding:14px 28px;
+      border-radius:999px;
+      border:1px solid rgba(76,175,80,0.3);
+      color:#9be29b;
+      background:rgba(76,175,80,0.1);
+      font-weight:600;font-size:15px;
+      backdrop-filter:blur(10px);
+      animation:successPop 0.5s cubic-bezier(0.68,-0.55,0.265,1.55);
+    }
+    .success.show{display:inline-block}
+
+    @keyframes successPop{
+      0%{opacity:0;transform:scale(0.8) translateY(10px)}
+      100%{opacity:1;transform:scale(1) translateY(0)}
+    }
+
+    /* Social links with hover effects */
+    .meta{
+      display:flex;gap:16px;align-items:center;
+      justify-content:center;margin-top:32px;flex-wrap:wrap;
+    }
+    
+    .social{display:flex;gap:12px}
+    .social a{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:50px;height:50px;border-radius:14px;
+      background:var(--glass-strong);
+      border:1px solid rgba(255,255,255,0.08);
+      color:#fff;text-decoration:none;font-size:20px;
+      transition:all 0.3s ease;
+      position:relative;overflow:hidden;
+    }
+
+    .social a::before{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(135deg,var(--red),var(--blue));
+      opacity:0;transition:opacity 0.3s ease;
+    }
+
+    .social a:hover{
+      transform:translateY(-4px) scale(1.05);
+      border-color:transparent;
+      box-shadow:0 8px 20px rgba(211,47,47,0.4);
+    }
+
+    .social a:hover::before{opacity:1}
+    .social a span{position:relative;z-index:1}
+
+    /* QR indicator with pulse effect */
+    .qr-indicator{
+      position:fixed;right:24px;top:24px;
+      padding:12px 20px;border-radius:999px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--muted);font-size:13px;font-weight:600;
+      z-index:10;backdrop-filter:blur(10px);
+      animation:indicatorFade 0.6s ease;
+    }
+
+    .qr-indicator::before{
+      content:'';position:absolute;inset:-2px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--red),var(--blue));
+      opacity:0.3;z-index:-1;
+      animation:pulse 2s ease infinite;
+    }
+
+    @keyframes pulse{
+      0%,100%{opacity:0.3;transform:scale(1)}
+      50%{opacity:0.6;transform:scale(1.05)}
+    }
+
+    /* Reveal animations */
+    .reveal{
+      opacity:0;transform:translateY(30px);
+      animation:reveal 0.8s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    .reveal.d1{animation-delay:0.1s}
+    .reveal.d2{animation-delay:0.2s}
+    .reveal.d3{animation-delay:0.3s}
+    .reveal.d4{animation-delay:0.4s}
+
+    @keyframes reveal{
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    @keyframes indicatorFade{
+      from{opacity:0;transform:translateX(20px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+
+    /* Responsive */
+    @media(max-width:768px){
+      .card{padding:40px 28px;border-radius:24px}
+      .logo{max-width:280px}
+      h1{font-size:clamp(32px,8vw,48px)}
+      .lead{font-size:16px}
+      .form-row{flex-direction:column}
+      .email{min-width:100%}
+      .qr-indicator{right:16px;top:16px;font-size:12px;padding:10px 16px}
+      .social a{width:46px;height:46px}
+    }
+
+    @media(max-width:480px){
+      .page{padding:24px 16px}
+      .card{padding:32px 20px}
+      .tag{font-size:11px;padding:6px 16px}
+    }
+
+    /* Accessibility */
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation-duration:0.01ms!important;
+        animation-iteration-count:1!important;
+        transition-duration:0.01ms!important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob a"></div>
+    <div class="blob b"></div>
+    <div class="blob c"></div>
+  </div>
+
+  <div class="particles" id="particles" aria-hidden="true"></div>
+
+  <div class="qr-indicator" id="qrIndicator">📱 Scanned from product</div>
+
+    <main class="page" role="main">
+    <section class="shell">
+      <div class="scale-wrap">
+        <div class="card">
+        <div class="logo reveal">
+          <img src="assets/images/logo.jpg" alt="Holborn Clothing logo">
+        </div>
+
+        <div class="reveal d1">
+          <span class="tag">Premium • Minimal • Responsible</span>
+        </div>
+
+        <h1 class="reveal d2">Coming Soon</h1>
+        
+        <p class="lead reveal d3">We're launching our full e‑commerce store soon. Scan your tag to learn more and sign up below to get notified on launch day.</p>
+
+        <div class="notify reveal d4">
+          <form id="notifyForm" class="form-row" action="#" method="POST" onsubmit="return handleSubmit(event)">
+            <input id="emailInput" class="email" type="email" name="email" placeholder="Enter your email address" aria-label="Email address" required>
+            <button class="cta" type="submit">Notify Me</button>
+          </form>
+
+          <div id="success" class="success" role="status" aria-live="polite">
+            ✓ Thanks — we'll notify you on launch day!
+          </div>
+
+          <div class="meta">
+            <div class="social">
+              <a href="#" title="Facebook" aria-label="Facebook"><span>f</span></a>
+              <a href="#" title="Instagram" aria-label="Instagram"><span>📷</span></a>
+              <a href="#" title="Twitter" aria-label="Twitter"><span>🐦</span></a>
+              <a href="#" title="WhatsApp" aria-label="WhatsApp"><span>💬</span></a>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Create floating particles
+    (function createParticles(){
+      const container = document.getElementById('particles');
+      const particleCount = 30;
+      
+      for(let i = 0; i < particleCount; i++){
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+        container.appendChild(particle);
+      }
+    })();
+
+    // Enhanced form submission
+    function handleSubmit(e){
+      e.preventDefault();
+      const btn = e.target.querySelector('.cta');
+      const email = document.getElementById('emailInput').value.trim();
+      
+      if(!email) return false;
+      
+      const ok = /^\S+@\S+\.\S+$/.test(email);
+      if(!ok){
+        alert('Please enter a valid email address.');
+        return false;
+      }
+
+      // Disable button during submission
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      // Simulate API call (replace with real endpoint)
+      setTimeout(() => {
+        document.getElementById('success').classList.add('show');
+        document.getElementById('notifyForm').reset();
+        btn.disabled = false;
+        btn.textContent = 'Notify Me';
+        
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          document.getElementById('success').classList.remove('show');
+        }, 5000);
+      }, 800);
+
+      return false;
+    }
+
+    // QR product tracking
+    (function(){
+      const params = new URLSearchParams(location.search);
+      const product = params.get('product');
+      const indicator = document.getElementById('qrIndicator');
+      
+      if(product){
+        indicator.innerHTML = '📱 Product: <strong>' + product + '</strong>';
+      } else {
+        indicator.textContent = '📱 Scan product QR for details';
+      }
+    })();
+
+    // Fit content to viewport (no scrolling): scale the .scale-wrap so the card always fits
+    (function(){
+      const wrap = document.querySelector('.scale-wrap');
+      const card = document.querySelector('.card');
+      if(!wrap || !card) return;
+
+      function fit(){
+        // reset any previous scale so we measure natural size
+        wrap.style.transform = 'none';
+
+        // measure natural content size (use scroll sizes to avoid transform issues)
+        const cw = card.scrollWidth || card.offsetWidth;
+        const ch = card.scrollHeight || card.offsetHeight;
+
+        // give some margins so indicator and padding fit comfortably
+        const marginW = 40; // left+right margin buffer
+        const marginH = 40; // top+bottom margin buffer
+
+        const maxW = Math.max(100, window.innerWidth - marginW);
+        const maxH = Math.max(100, window.innerHeight - marginH);
+
+        // compute scale (never exceed 1)
+        const scale = Math.min(1, maxW / Math.max(1, cw), maxH / Math.max(1, ch));
+
+        // apply scale to wrapper
+        wrap.style.transform = `scale(${scale})`;
+
+        // optionally center the scaled content vertically by adjusting shell spacing
+        // keep .page centered; scaling will reduce visual size so centering stays accurate
+      }
+
+      // debounce helper
+      let t;
+      function onResize(){
+        clearTimeout(t);
+        t = setTimeout(fit, 80);
+      }
+
+      // initial fit and attach listeners
+      window.addEventListener('load', fit);
+      window.addEventListener('resize', onResize);
+      window.addEventListener('orientationchange', onResize);
+
+      // also run once now
+      fit();
+    })();
+
+    // Add subtle parallax effect on mouse move
+    document.addEventListener('mousemove', (e) => {
+      const cards = document.querySelectorAll('.card');
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+      
+      cards.forEach(card => {
+        const moveX = (x - 0.5) * 20;
+        const moveY = (y - 0.5) * 20;
+        card.style.transform = `perspective(1000px) rotateY(${moveX * 0.1}deg) rotateX(${-moveY * 0.1}deg)`;
+      });
+    });
+  </script>
+</body>
+</html>
