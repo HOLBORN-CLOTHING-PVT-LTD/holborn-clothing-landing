@@ -20,12 +20,12 @@
       --radius:999px;
     }
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;overflow:hidden}
+    html,body{height:100%}
     body{
       font-family:'Inter',system-ui,-apple-system,sans-serif;
       background:var(--bg);color:#fff;line-height:1.6;
       -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-      overflow:hidden;position:relative;
+      overflow-x:hidden;position:relative;
     }
 
     /* Enhanced background with particles */
@@ -82,15 +82,15 @@
     }
 
     /* Main layout */
-    /* ensure the page fills the viewport and doesn't scroll; content is scaled to fit */
+    /* Increased top padding for better vertical centering */
     .page{
       min-height:100vh;display:flex;align-items:center;justify-content:center;
-      padding:40px 20px;position:relative;z-index:2;overflow:visible;
+      padding:60px 20px;position:relative;z-index:2;
     }
-    .shell{width:100%;max-width:var(--max-width);position:relative}
+  .shell{width:100%;max-width:var(--max-width);position:relative}
 
-    /* wrapper used to scale the content so the page never scrolls */
-    .scale-wrap{display:flex;align-items:center;justify-content:center;transform-origin:top center;width:100%}
+  /* wrapper used to scale the content so the page can fit without scrolling */
+  .scale-wrap{display:flex;align-items:center;justify-content:center;transform-origin:top center;width:100%}
 
     /* Enhanced card with better glassmorphism */
     .card{
@@ -156,7 +156,15 @@
       content:'';position:absolute;bottom:-8px;left:50%;
       transform:translateX(-50%);width:60%;height:3px;
       background:linear-gradient(90deg,transparent,var(--red),var(--blue),transparent);
-      border-radius:999px;opacity:0.6;
+      background-size:200% 100%;
+      border-radius:999px;opacity:0.8;
+      /* Knight Rider scanning animation: smooth left-to-right loop */
+      animation:knight 3s linear infinite;
+    }
+
+    @keyframes knight{
+      0%{background-position:0% 50%}
+      100%{background-position:100% 50%}
     }
 
     @keyframes gradientShift{
@@ -283,6 +291,12 @@
       color:var(--muted);font-size:13px;font-weight:600;
       z-index:10;backdrop-filter:blur(10px);
       animation:indicatorFade 0.6s ease;
+      /* responsive overflow handling */
+      max-width: calc(100% - 32px);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      box-sizing: border-box;
     }
 
     .qr-indicator::before{
@@ -319,20 +333,32 @@
 
     /* Responsive */
     @media(max-width:768px){
+      /* Mobile/tablet: 80px top, 40px bottom for balanced spacing */
+      .page{padding:80px 20px 40px}
       .card{padding:40px 28px;border-radius:24px}
       .logo{max-width:280px}
       h1{font-size:clamp(32px,8vw,48px)}
       .lead{font-size:16px}
       .form-row{flex-direction:column}
       .email{min-width:100%}
-      .qr-indicator{right:16px;top:16px;font-size:12px;padding:10px 16px}
+      .qr-indicator{
+        right:50%;top:16px;
+        transform:translateX(50%);
+        font-size:11px;padding:8px 14px;
+        max-width:calc(100% - 32px);
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
       .social a{width:46px;height:46px}
     }
 
     @media(max-width:480px){
-      .page{padding:24px 16px}
+      /* Small mobile: increase top margin to 80px and bottom to 40px as requested */
+      .page{padding:80px 16px 40px}
       .card{padding:32px 20px}
       .tag{font-size:11px;padding:6px 16px}
+      .qr-indicator{font-size:10px;padding:6px 12px;right:50%;transform:translateX(50%);max-width:calc(100% - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     }
 
     /* Accessibility */
@@ -356,7 +382,7 @@
 
   <div class="qr-indicator" id="qrIndicator">📱 Scanned from product</div>
 
-    <main class="page" role="main">
+  <main class="page" role="main">
     <section class="shell">
       <div class="scale-wrap">
         <div class="card">
@@ -459,6 +485,19 @@
       }
     })();
 
+    // Add subtle parallax effect on mouse move
+    document.addEventListener('mousemove', (e) => {
+      const cards = document.querySelectorAll('.card');
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+      
+      cards.forEach(card => {
+        const moveX = (x - 0.5) * 20;
+        const moveY = (y - 0.5) * 20;
+        card.style.transform = `perspective(1000px) rotateY(${moveX * 0.1}deg) rotateX(${-moveY * 0.1}deg)`;
+      });
+    });
+
     // Fit content to viewport (no scrolling): scale the .scale-wrap so the card always fits
     (function(){
       const wrap = document.querySelector('.scale-wrap');
@@ -469,13 +508,14 @@
         // reset any previous scale so we measure natural size
         wrap.style.transform = 'none';
 
-        // measure natural content size (use scroll sizes to avoid transform issues)
-        const cw = card.scrollWidth || card.offsetWidth;
-        const ch = card.scrollHeight || card.offsetHeight;
+        // measure natural content size
+        const cw = card.offsetWidth;
+        const ch = card.offsetHeight;
 
-        // give some margins so indicator and padding fit comfortably
-        const marginW = 40; // left+right margin buffer
-        const marginH = 40; // top+bottom margin buffer
+        // margins: wider top margin on mobile to avoid overlapping the QR indicator
+        const marginW = 40; // left+right buffer
+        const marginTop = window.innerWidth <= 768 ? 120 : 80; // mobile: 120px top vs 80px
+        const marginH = marginTop + 40; // combined top+bottom buffer
 
         const maxW = Math.max(100, window.innerWidth - marginW);
         const maxH = Math.max(100, window.innerHeight - marginH);
@@ -485,9 +525,6 @@
 
         // apply scale to wrapper
         wrap.style.transform = `scale(${scale})`;
-
-        // optionally center the scaled content vertically by adjusting shell spacing
-        // keep .page centered; scaling will reduce visual size so centering stays accurate
       }
 
       // debounce helper
@@ -502,22 +539,9 @@
       window.addEventListener('resize', onResize);
       window.addEventListener('orientationchange', onResize);
 
-      // also run once now
+      // run once now
       fit();
     })();
-
-    // Add subtle parallax effect on mouse move
-    document.addEventListener('mousemove', (e) => {
-      const cards = document.querySelectorAll('.card');
-      const x = e.clientX / window.innerWidth;
-      const y = e.clientY / window.innerHeight;
-      
-      cards.forEach(card => {
-        const moveX = (x - 0.5) * 20;
-        const moveY = (y - 0.5) * 20;
-        card.style.transform = `perspective(1000px) rotateY(${moveX * 0.1}deg) rotateX(${-moveY * 0.1}deg)`;
-      });
-    });
   </script>
 </body>
 </html>
