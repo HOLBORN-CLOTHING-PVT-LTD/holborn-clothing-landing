@@ -1,0 +1,15 @@
+{
+  "name": "holborn-clothing-landing-server",
+  "version": "1.0.0",
+  "description": "Small server to accept newsletter signups and send confirmation emails for Holborn Clothing landing page",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.3",
+    "fs-extra": "^11.1.1"
+  }
+}
