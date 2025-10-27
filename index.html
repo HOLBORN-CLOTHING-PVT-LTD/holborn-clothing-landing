@@ -22,7 +22,7 @@
       --max-width:1100px;
       --radius:999px;
     }
-    *{box-sizing:border-box;margin:0;padding:0}
+    *{box-sizing:border-box;margin: -20px;padding:0}
     html,body{height:100%}
     body{
       font-family:'Inter',system-ui,-apple-system,sans-serif;
@@ -85,10 +85,10 @@
     }
 
     /* Main layout */
-    /* Increased top padding for better vertical centering */
+    /* Reduced top gap and added bottom gap for improved balance */
     .page{
       min-height:100vh;display:flex;align-items:center;justify-content:center;
-      padding:60px 20px;position:relative;z-index:2;
+      padding:30px 20px 80px;position:relative;z-index:2;
     }
   .shell{width:100%;max-width:var(--max-width);position:relative}
 
@@ -108,6 +108,8 @@
       max-width:920px;margin:0 auto;text-align:center;
       transform-style:preserve-3d;
       transition:transform 0.3s ease;
+      /* add a small bottom margin so the card doesn't butt up to the page bottom when scaled */
+      margin-bottom:20px;
     }
 
     .card::before{
@@ -516,9 +518,10 @@
         const ch = card.offsetHeight;
 
         // margins: wider top margin on mobile to avoid overlapping the QR indicator
-        const marginW = 40; // left+right buffer
-        const marginTop = window.innerWidth <= 768 ? 120 : 80; // mobile: 120px top vs 80px
-        const marginH = marginTop + 40; // combined top+bottom buffer
+          const marginW = 40; // left+right buffer
+          // Reduced top margin for desktop, keep a reasonable top buffer on mobile
+          const marginTop = window.innerWidth <= 768 ? 80 : 40; // mobile: 80px top vs 40px
+          const marginH = marginTop + 40; // combined top+bottom buffer
 
         const maxW = Math.max(100, window.innerWidth - marginW);
         const maxH = Math.max(100, window.innerHeight - marginH);
