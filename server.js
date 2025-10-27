@@ -46,56 +46,61 @@ app.post('/api/subscribe', async (req, res) => {
       await fs.writeJson(DATA_FILE, list, { spaces: 2 });
     }
 
-    // Send confirmation email. If SMTP env vars are provided use them,
-    // otherwise fall back to Nodemailer's Ethereal test account so we can
-    // exercise the full sending flow during local development and tests.
-    try{
-  // Default FROM address set per user request; can be overridden with env var
-  const from = process.env.FROM_ADDRESS || 'hello@abhiranda21@gmail.com';
-  const siteName = process.env.SITE_NAME || 'Holborn Clothing';
+    // Confirmation email sending is controlled by the SEND_CONFIRMATION_EMAILS
+    // environment variable. By default it's disabled to avoid sending real
+    // emails during development. To enable set SEND_CONFIRMATION_EMAILS=true
+    // and provide SMTP_* env vars.
+    if(process.env.SEND_CONFIRMATION_EMAILS === 'true'){
+      try{
+        // Default FROM address set per user request; can be overridden with env var
+        const from = process.env.FROM_ADDRESS || 'hello@abhiranda21@gmail.com';
+        const siteName = process.env.SITE_NAME || 'Holborn Clothing';
 
-      const mailOptions = {
-        from,
-        to: email,
-        subject: `Thanks for joining ${siteName}`,
-        text: `Thanks for joining ${siteName}!\n\nWe'll keep you updated about our launch and new arrivals.\n\n— The ${siteName} Team`,
-        html: `<p>Thanks for joining <strong>${siteName}</strong>!</p><p>We'll keep you updated about our launch and new arrivals.</p><p>— The ${siteName} Team</p>`
-      };
+        const mailOptions = {
+          from,
+          to: email,
+          subject: `Thanks for joining ${siteName}`,
+          text: `Thanks for joining ${siteName}!\n\nWe'll keep you updated about our launch and new arrivals.\n\n— The ${siteName} Team`,
+          html: `<p>Thanks for joining <strong>${siteName}</strong>!</p><p>We'll keep you updated about our launch and new arrivals.</p><p>— The ${siteName} Team</p>`
+        };
 
-      if(process.env.SMTP_HOST){
-        // Real SMTP provided
-        const transporter = nodemailer.createTransport({
-          host: process.env.SMTP_HOST,
-          port: Number(process.env.SMTP_PORT || 587),
-          secure: process.env.SMTP_SECURE === 'true',
-          auth: process.env.SMTP_USER ? {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
-          } : undefined
-        });
+        if(process.env.SMTP_HOST){
+          // Real SMTP provided
+          const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: Number(process.env.SMTP_PORT || 587),
+            secure: process.env.SMTP_SECURE === 'true',
+            auth: process.env.SMTP_USER ? {
+              user: process.env.SMTP_USER,
+              pass: process.env.SMTP_PASS
+            } : undefined
+          });
 
-        await transporter.sendMail(mailOptions);
-        console.log('Confirmation email sent to', email);
-      }else{
-        // No SMTP configured — create an Ethereal test account and send there.
-        const testAccount = await nodemailer.createTestAccount();
-        const transporter = nodemailer.createTransport({
-          host: 'smtp.ethereal.email',
-          port: 587,
-          secure: false,
-          auth: {
-            user: testAccount.user,
-            pass: testAccount.pass
-          }
-        });
+          await transporter.sendMail(mailOptions);
+          console.log('Confirmation email sent to', email);
+        }else{
+          // No SMTP configured — create an Ethereal test account and send there.
+          const testAccount = await nodemailer.createTestAccount();
+          const transporter = nodemailer.createTransport({
+            host: 'smtp.ethereal.email',
+            port: 587,
+            secure: false,
+            auth: {
+              user: testAccount.user,
+              pass: testAccount.pass
+            }
+          });
 
-        const info = await transporter.sendMail(mailOptions);
-        const preview = nodemailer.getTestMessageUrl(info);
-        console.log('Sent test confirmation email for', email);
-        console.log('Preview URL:', preview);
+          const info = await transporter.sendMail(mailOptions);
+          const preview = nodemailer.getTestMessageUrl(info);
+          console.log('Sent test confirmation email for', email);
+          console.log('Preview URL:', preview);
+        }
+      }catch(err){
+        console.error('Failed to send confirmation email:', err && err.message);
       }
-    }catch(err){
-      console.error('Failed to send confirmation email:', err && err.message);
+    } else {
+      console.log('SEND_CONFIRMATION_EMAILS !== true — skipping confirmation email.');
     }
 
     return res.json({ success:true, message: 'Subscribed' });
