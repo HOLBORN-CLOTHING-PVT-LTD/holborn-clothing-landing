@@ -3,12 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" type="image/jpg" href="assets/images/logo.jpg">
   <title>Holborn Clothing — Coming Soon</title>
   <meta name="description" content="Holborn Clothing — premium streetwear. Scan the product QR, sign up for launch updates and follow us on social media.">
   <meta name="theme-color" content="#0a0a0a">
-  <!-- Site header icon (uses the same JPG logo in assets) -->
-  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
-  <link rel="apple-touch-icon" href="assets/images/logo.jpg">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     
@@ -22,13 +20,14 @@
       --max-width:1100px;
       --radius:999px;
     }
-    *{box-sizing:border-box;margin: -20px;padding:0}
-    html,body{height:100%}
+    *{box-sizing:border-box;margin:0;padding:0}
+    /* Prevent any page scrolling — content is scaled to fit the viewport */
+    html,body{height:100%;overflow:hidden}
     body{
       font-family:'Inter',system-ui,-apple-system,sans-serif;
       background:var(--bg);color:#fff;line-height:1.6;
       -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-      overflow-x:hidden;position:relative;
+      overflow:hidden;position:relative;
     }
 
     /* Enhanced background with particles */
@@ -85,15 +84,14 @@
     }
 
     /* Main layout */
-    /* Reduced top gap and added bottom gap for improved balance */
     .page{
       min-height:100vh;display:flex;align-items:center;justify-content:center;
       padding:30px 20px 80px;position:relative;z-index:2;
     }
-  .shell{width:100%;max-width:var(--max-width);position:relative}
+    .shell{width:100%;max-width:var(--max-width);position:relative}
 
-  /* wrapper used to scale the content so the page can fit without scrolling */
-  .scale-wrap{display:flex;align-items:center;justify-content:center;transform-origin:top center;width:100%}
+    /* wrapper used to scale the content so the page can fit without scrolling */
+    .scale-wrap{display:flex;align-items:center;justify-content:center;transform-origin:top center;width:100%}
 
     /* Enhanced card with better glassmorphism */
     .card{
@@ -108,7 +106,6 @@
       max-width:920px;margin:0 auto;text-align:center;
       transform-style:preserve-3d;
       transition:transform 0.3s ease;
-      /* add a small bottom margin so the card doesn't butt up to the page bottom when scaled */
       margin-bottom:20px;
     }
 
@@ -132,6 +129,15 @@
       transform:scale(1.02);
     }
     .logo img{display:block;width:100%;height:auto}
+
+    /* Fallback for missing logo */
+    .logo-fallback{
+      display:inline-block;
+      font-size:48px;
+      font-weight:800;
+      color:var(--red);
+      letter-spacing:-0.02em;
+    }
 
     /* Typography enhancements */
     .tag{
@@ -163,7 +169,6 @@
       background:linear-gradient(90deg,transparent,var(--red),var(--blue),transparent);
       background-size:200% 100%;
       border-radius:999px;opacity:0.8;
-      /* Knight Rider scanning animation: smooth left-to-right loop */
       animation:knight 3s linear infinite;
     }
 
@@ -221,6 +226,11 @@
       position:relative;overflow:hidden;
     }
 
+    .cta:disabled{
+      opacity:0.6;
+      cursor:not-allowed;
+    }
+
     .cta::before{
       content:'';position:absolute;inset:0;
       background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent);
@@ -228,29 +238,39 @@
       transition:transform 0.5s ease;
     }
 
-    .cta:hover{
+    .cta:hover:not(:disabled){
       transform:translateY(-2px);
       box-shadow:0 12px 32px rgba(211,47,47,0.6);
       background-position:100% 0;
     }
 
-    .cta:hover::before{transform:translateX(100%)}
-    .cta:active{transform:translateY(0)}
+    .cta:hover:not(:disabled)::before{transform:translateX(100%)}
+    .cta:active:not(:disabled){transform:translateY(0)}
 
-    /* Success message */
-    .success{
+    /* Success and error messages */
+    .success, .error{
       display:none;margin-top:20px;padding:14px 28px;
       border-radius:999px;
+      font-weight:600;font-size:15px;
+      backdrop-filter:blur(10px);
+      animation:messagePop 0.5s cubic-bezier(0.68,-0.55,0.265,1.55);
+    }
+    
+    .success{
       border:1px solid rgba(76,175,80,0.3);
       color:#9be29b;
       background:rgba(76,175,80,0.1);
-      font-weight:600;font-size:15px;
-      backdrop-filter:blur(10px);
-      animation:successPop 0.5s cubic-bezier(0.68,-0.55,0.265,1.55);
     }
-    .success.show{display:inline-block}
+    
+    .error{
+      border:1px solid rgba(211,47,47,0.3);
+      color:#ff9b9b;
+      background:rgba(211,47,47,0.1);
+    }
+    
+    .success.show, .error.show{display:inline-block}
 
-    @keyframes successPop{
+    @keyframes messagePop{
       0%{opacity:0;transform:scale(0.8) translateY(10px)}
       100%{opacity:1;transform:scale(1) translateY(0)}
     }
@@ -258,7 +278,7 @@
     /* Social links with hover effects */
     .meta{
       display:flex;gap:16px;align-items:center;
-      justify-content:center;margin-top:32px;flex-wrap:wrap;
+      justify-content:center;margin-top:32px;flex-wrap:wrap;z-index:2;position:relative;
     }
     
     .social{display:flex;gap:12px}
@@ -270,6 +290,9 @@
       color:#fff;text-decoration:none;font-size:20px;
       transition:all 0.3s ease;
       position:relative;overflow:hidden;
+      /* make sure icons don't overlap when space is tight */
+      flex: 0 0 auto;
+      margin: 0;
     }
 
     .social a::before{
@@ -296,7 +319,6 @@
       color:var(--muted);font-size:13px;font-weight:600;
       z-index:10;backdrop-filter:blur(10px);
       animation:indicatorFade 0.6s ease;
-      /* responsive overflow handling */
       max-width: calc(100% - 32px);
       overflow: hidden;
       white-space: nowrap;
@@ -338,7 +360,6 @@
 
     /* Responsive */
     @media(max-width:768px){
-      /* Mobile/tablet: 80px top, 40px bottom for balanced spacing */
       .page{padding:80px 20px 40px}
       .card{padding:40px 28px;border-radius:24px}
       .logo{max-width:280px}
@@ -351,19 +372,15 @@
         transform:translateX(50%);
         font-size:11px;padding:8px 14px;
         max-width:calc(100% - 32px);
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
       }
       .social a{width:46px;height:46px}
     }
 
     @media(max-width:480px){
-      /* Small mobile: increase top margin to 80px and bottom to 40px as requested */
       .page{padding:80px 16px 40px}
       .card{padding:32px 20px}
       .tag{font-size:11px;padding:6px 16px}
-      .qr-indicator{font-size:10px;padding:6px 12px;right:50%;transform:translateX(50%);max-width:calc(100% - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .qr-indicator{font-size:10px;padding:6px 12px}
     }
 
     /* Accessibility */
@@ -392,7 +409,8 @@
       <div class="scale-wrap">
         <div class="card">
         <div class="logo reveal">
-          <img src="assets/images/logo.jpg" alt="Holborn Clothing logo">
+          <img src="assets/images/logo.jpg" alt="Holborn Clothing logo" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+          <div class="logo-fallback" style="display:none;">HOLBORN</div>
         </div>
 
         <div class="reveal d1">
@@ -404,7 +422,7 @@
         <p class="lead reveal d3">We're launching our full e‑commerce store soon. Scan your tag to learn more and sign up below to get notified on launch day.</p>
 
         <div class="notify reveal d4">
-          <form id="notifyForm" class="form-row" action="#" method="POST" onsubmit="return handleSubmit(event)">
+          <form id="notifyForm" class="form-row" onsubmit="return handleSubmit(event)">
             <input id="emailInput" class="email" type="email" name="email" placeholder="Enter your email address" aria-label="Email address" required>
             <button class="cta" type="submit">Notify Me</button>
           </form>
@@ -412,13 +430,17 @@
           <div id="success" class="success" role="status" aria-live="polite">
             ✓ Thanks — we'll notify you on launch day!
           </div>
+          
+          <div id="error" class="error" role="alert" aria-live="assertive">
+            ✗ Something went wrong. Please try again.
+          </div>
 
           <div class="meta">
             <div class="social">
-              <a href="#" title="Facebook" aria-label="Facebook"><span>f</span></a>
-              <a href="#" title="Instagram" aria-label="Instagram"><span>📷</span></a>
-              <a href="#" title="Twitter" aria-label="Twitter"><span>🐦</span></a>
-              <a href="#" title="WhatsApp" aria-label="WhatsApp"><span>💬</span></a>
+              <a href="https://facebook.com/holbornclothing" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Visit our Facebook page"><span>f</span></a>
+              <a href="https://instagram.com/holbornclothing" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Visit our Instagram page"><span>📷</span></a>
+              <a href="https://twitter.com/holbornclothing" target="_blank" rel="noopener noreferrer" title="Twitter" aria-label="Visit our Twitter page"><span>🐦</span></a>
+              <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="Contact us on WhatsApp"><span>💬</span></a>
             </div>
           </div>
         </div>
@@ -443,17 +465,27 @@
       }
     })();
 
-    // Enhanced form submission
+    // Enhanced form submission with better validation
     function handleSubmit(e){
       e.preventDefault();
       const btn = e.target.querySelector('.cta');
-      const email = document.getElementById('emailInput').value.trim();
+      const emailInput = document.getElementById('emailInput');
+      const email = emailInput.value.trim();
+      const successMsg = document.getElementById('success');
+      const errorMsg = document.getElementById('error');
+      
+      // Hide any previous messages
+      successMsg.classList.remove('show');
+      errorMsg.classList.remove('show');
       
       if(!email) return false;
       
-      const ok = /^\S+@\S+\.\S+$/.test(email);
-      if(!ok){
-        alert('Please enter a valid email address.');
+      // Enhanced email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if(!emailRegex.test(email)){
+        errorMsg.textContent = '✗ Please enter a valid email address.';
+        errorMsg.classList.add('show');
+        setTimeout(() => errorMsg.classList.remove('show'), 5000);
         return false;
       }
 
@@ -461,17 +493,31 @@
       btn.disabled = true;
       btn.textContent = 'Submitting...';
 
-      // Simulate API call (replace with real endpoint)
+      // TODO: Replace with actual API endpoint
+      // Example: fetch('/api/subscribe', { method: 'POST', body: JSON.stringify({email}) })
+      
+      // Simulate API call
       setTimeout(() => {
-        document.getElementById('success').classList.add('show');
-        document.getElementById('notifyForm').reset();
+        // Simulate random success/failure for demo
+        const success = true; // Change to test error handling
+        
+        if(success){
+          successMsg.classList.add('show');
+          emailInput.value = '';
+          
+          // Track submission (replace with actual analytics)
+          console.log('Email submitted:', email);
+          
+          // Hide success message after 5 seconds
+          setTimeout(() => successMsg.classList.remove('show'), 5000);
+        } else {
+          errorMsg.textContent = '✗ Something went wrong. Please try again.';
+          errorMsg.classList.add('show');
+          setTimeout(() => errorMsg.classList.remove('show'), 5000);
+        }
+        
         btn.disabled = false;
         btn.textContent = 'Notify Me';
-        
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          document.getElementById('success').classList.remove('show');
-        }, 5000);
       }, 800);
 
       return false;
@@ -484,68 +530,70 @@
       const indicator = document.getElementById('qrIndicator');
       
       if(product){
-        indicator.innerHTML = '📱 Product: <strong>' + product + '</strong>';
+        // Sanitize product parameter to prevent XSS
+        const sanitized = document.createElement('div');
+        sanitized.textContent = product;
+        indicator.innerHTML = '📱 Product: <strong>' + sanitized.innerHTML + '</strong>';
+        
+        // Track product view (replace with actual analytics)
+        console.log('Product viewed:', product);
       } else {
         indicator.textContent = '📱 Scan product QR for details';
       }
     })();
 
-    // Add subtle parallax effect on mouse move
+    // Add subtle parallax effect on mouse move (reduced intensity to avoid layout shift)
     document.addEventListener('mousemove', (e) => {
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
       const cards = document.querySelectorAll('.card');
       const x = e.clientX / window.innerWidth;
       const y = e.clientY / window.innerHeight;
-      
+
+      // smaller multipliers => smaller rotation angles (keeps layout stable)
+      const maxAngle = 6; // degrees
+
       cards.forEach(card => {
-        const moveX = (x - 0.5) * 20;
-        const moveY = (y - 0.5) * 20;
-        card.style.transform = `perspective(1000px) rotateY(${moveX * 0.1}deg) rotateX(${-moveY * 0.1}deg)`;
+        const rotY = (x - 0.5) * maxAngle; // left/right
+        const rotX = (y - 0.5) * maxAngle; // up/down
+        card.style.transform = `perspective(1000px) rotateY(${rotY}deg) rotateX(${-rotX}deg)`;
       });
     });
 
-    // Fit content to viewport (no scrolling): scale the .scale-wrap so the card always fits
+    // Fit content to viewport (no scrolling)
     (function(){
       const wrap = document.querySelector('.scale-wrap');
       const card = document.querySelector('.card');
       if(!wrap || !card) return;
 
       function fit(){
-        // reset any previous scale so we measure natural size
         wrap.style.transform = 'none';
 
-        // measure natural content size
         const cw = card.offsetWidth;
         const ch = card.offsetHeight;
 
-        // margins: wider top margin on mobile to avoid overlapping the QR indicator
-          const marginW = 40; // left+right buffer
-          // Reduced top margin for desktop, keep a reasonable top buffer on mobile
-          const marginTop = window.innerWidth <= 768 ? 80 : 40; // mobile: 80px top vs 40px
-          const marginH = marginTop + 40; // combined top+bottom buffer
+        const marginW = 40;
+        const marginTop = window.innerWidth <= 768 ? 80 : 40;
+        const marginH = marginTop + 40;
 
         const maxW = Math.max(100, window.innerWidth - marginW);
         const maxH = Math.max(100, window.innerHeight - marginH);
 
-        // compute scale (never exceed 1)
         const scale = Math.min(1, maxW / Math.max(1, cw), maxH / Math.max(1, ch));
 
-        // apply scale to wrapper
         wrap.style.transform = `scale(${scale})`;
       }
 
-      // debounce helper
-      let t;
+      let resizeTimeout;
       function onResize(){
-        clearTimeout(t);
-        t = setTimeout(fit, 80);
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(fit, 80);
       }
 
-      // initial fit and attach listeners
       window.addEventListener('load', fit);
       window.addEventListener('resize', onResize);
       window.addEventListener('orientationchange', onResize);
 
-      // run once now
       fit();
     })();
   </script>
