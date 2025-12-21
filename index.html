@@ -179,8 +179,11 @@
       padding: 15px 25px;
       margin-bottom: 5px;
       display: inline-block;
-      backdrop-filter: blur(2px);
-      /* Slight blur to help logo pop */
+      backdrop-filter: blur(10px);
+      /* Stronger blur for glass effect */
+      background: rgba(255, 255, 255, 0.15);
+      /* "Smoke" / glass effect */
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
 
     .logo-top {
@@ -400,6 +403,8 @@
   </div>
 
   <script>
+    const FORMSPREE_ID = "xjgbrqqb";
+
     async function handleSubmit(e) {
       e.preventDefault();
       const btn = e.target.querySelector('button');
@@ -414,24 +419,48 @@
       statusMsg.className = 'msg';
       statusMsg.innerText = '';
 
+      // Determine Environment
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
       try {
-        const API_BASE = (document.querySelector('meta[name="api-base"]') || { content: '' }).content.trim();
-        const target = API_BASE ? API_BASE + '/api/subscribe' : '/api/subscribe';
+        let responseOk = false;
+        let data = {};
 
-        const resp = await fetch(target, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
+        if (isLocalhost) {
+          // --- Local Host: Use local Node.js server ---
+          const API_BASE = (document.querySelector('meta[name="api-base"]') || { content: '' }).content.trim();
+          const target = API_BASE ? API_BASE + '/api/subscribe' : '/api/subscribe';
 
-        const data = await resp.json();
+          const resp = await fetch(target, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+          });
+          data = await resp.json();
+          responseOk = resp.ok && data.success;
+        } else {
+          // --- Production (GitHub Pages): Use Formspree ---
+          const target = `https://formspree.io/f/${FORMSPREE_ID}`;
 
-        if (resp.ok && data.success) {
+          const resp = await fetch(target, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: new FormData(e.target) // Formspree likes FormData or standard POSTs
+          });
+          data = await resp.json();
+          responseOk = resp.ok;
+
+          // Formspree returns { ok: true } usually
+        }
+
+        if (responseOk) {
           statusMsg.innerText = 'Thanks! We will be in touch.';
           statusMsg.classList.add('success');
           emailInput.value = '';
         } else {
-          throw new Error(data.message || 'Error');
+          // Identify error message
+          const msg = data.message || (data.errors ? data.errors.map(err => err.message).join(', ') : 'Error submitting form');
+          throw new Error(msg);
         }
       } catch (err) {
         console.error(err);
