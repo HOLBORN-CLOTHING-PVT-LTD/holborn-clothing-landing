@@ -1,673 +1,458 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" type="image/jpg" href="assets/images/logo.jpg">
+  <link rel="icon" type="image/jpg" href="assets/images/holborn-logo.jpg">
   <title>Holborn Clothing — Coming Soon</title>
-  <meta name="description" content="Holborn Clothing — premium streetwear. Scan the product QR, sign up for launch updates and follow us on social media.">
-  <meta name="theme-color" content="#0a0a0a">
-  <!-- Set to your deployed API base (e.g. https://api.example.com). Leave empty to use same origin -->
+  <meta name="description" content="Holborn Clothing — premium streetwear. Experience the collection soon.">
+  <meta name="theme-color" content="#0e0e10">
   <meta name="api-base" content="">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    
-    :root{
-      --bg:#0a0a0a;
-      --muted:#8f8f8f;
-      --red:#d32f2f;
-      --blue:#1565c0;
-      --glass: rgba(255,255,255,0.04);
-      --glass-strong: rgba(255,255,255,0.08);
-      --max-width:1100px;
-      --radius:999px;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    /* Prevent any page scrolling — content is scaled to fit the viewport */
-    html,body{height:100%;overflow:hidden}
-    body{
-      font-family:'Inter',system-ui,-apple-system,sans-serif;
-      background:var(--bg);color:#fff;line-height:1.6;
-      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-      overflow:hidden;position:relative;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&display=swap');
+
+    :root {
+      --bg: #000;
+      --text-gold: #e6dac3;
+      --red: #d32f2f;
     }
 
-    /* Enhanced background with particles */
-    .bg-blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-    .blob{
-      position:absolute;border-radius:50%;
-      filter:blur(80px);opacity:0.15;mix-blend-mode:screen;
-      will-change:transform;
-    }
-    .blob.a{
-      width:600px;height:600px;left:-250px;top:-180px;
-      background:radial-gradient(circle,var(--red),#b71c1c);
-      animation:floatA 20s ease-in-out infinite;
-    }
-    .blob.b{
-      width:500px;height:500px;right:-180px;bottom:-180px;
-      background:radial-gradient(circle,var(--blue),#0b3b91);
-      animation:floatB 28s ease-in-out infinite;
-    }
-    .blob.c{
-      width:350px;height:350px;right:15%;top:35%;
-      background:radial-gradient(circle,var(--red),var(--blue));
-      animation:floatC 24s ease-in-out infinite;
-    }
-
-    /* Particle effect */
-    .particles{position:fixed;inset:0;z-index:1;pointer-events:none}
-    .particle{
-      position:absolute;border-radius:50%;
-      background:rgba(255,255,255,0.45);
-      box-shadow:0 0 8px rgba(255,255,255,0.18);
-      will-change:transform,opacity;
-      /* size and animation are set inline for variety */
-      animation-name:particleFloat;
-      animation-timing-function:linear;
-      animation-iteration-count:infinite;
-    }
-
-    @keyframes particleFloat{
-      0%{transform:translateY(110vh) translateX(0);opacity:0}
-      8%{opacity:0.6}
-      70%{opacity:0.25}
-      100%{transform:translateY(-110vh) translateX(60px);opacity:0}
-    }
-
-    @keyframes floatA{
-      0%,100%{transform:translate(0,0) scale(1)}
-      33%{transform:translate(30px,-50px) scale(1.1)}
-      66%{transform:translate(-40px,30px) scale(0.95)}
-    }
-    @keyframes floatB{
-      0%,100%{transform:translate(0,0) scale(1)}
-      33%{transform:translate(-35px,60px) scale(1.05)}
-      66%{transform:translate(45px,-35px) scale(0.9)}
-    }
-    @keyframes floatC{
-      0%,100%{transform:translate(0,0) rotate(0deg) scale(1)}
-      50%{transform:translate(-25px,-40px) rotate(180deg) scale(1.15)}
-    }
-
-    /* Main layout */
-    .page{
-      min-height:100vh;display:flex;align-items:center;justify-content:center;
-      padding:30px 20px 80px;position:relative;z-index:2;
-    }
-    .shell{width:100%;max-width:var(--max-width);position:relative}
-
-    /* wrapper used to scale the content so the page can fit without scrolling */
-    .scale-wrap{display:flex;align-items:center;justify-content:center;transform-origin:top center;width:100%}
-
-    /* Enhanced card with better glassmorphism */
-    .card{
-      position:relative;
-      background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01));
-      border:1px solid rgba(255,255,255,0.08);
-      backdrop-filter:blur(20px) saturate(180%);
-      -webkit-backdrop-filter:blur(20px) saturate(180%);
-      padding:60px 48px;border-radius:32px;
-      box-shadow:0 20px 60px rgba(0,0,0,0.8),
-                 inset 0 1px 0 rgba(255,255,255,0.1);
-      max-width:920px;margin:0 auto;text-align:center;
-      transform-style:preserve-3d;
-      transition:transform 0.3s ease;
-      margin-bottom:20px;
-    }
-
-    .card::before{
-      content:'';position:absolute;inset:0;
-      background:linear-gradient(135deg,rgba(211,47,47,0.05),rgba(21,101,192,0.05));
-      border-radius:32px;z-index:-1;opacity:0;
-      transition:opacity 0.4s ease;
-    }
-
-    .card:hover::before{opacity:1}
-
-    /* Enhanced logo with glow effect */
-    .logo{
-      max-width:360px;margin:0 auto 40px;
-      filter:drop-shadow(0 0 40px rgba(211,47,47,0.3));
-      transition:filter 0.4s ease,transform 0.4s ease;
-    }
-    .logo:hover{
-      filter:drop-shadow(0 0 60px rgba(211,47,47,0.5));
-      transform:scale(1.02);
-    }
-    .logo img{display:block;width:100%;height:auto}
-
-    /* Fallback for missing logo */
-    .logo-fallback{
-      display:inline-block;
-      font-size:48px;
-      font-weight:800;
-      color:var(--red);
-      letter-spacing:-0.02em;
-    }
-
-    /* Typography enhancements */
-    .tag{
-      color:var(--muted);font-weight:600;margin-bottom:16px;
-      font-size:13px;letter-spacing:2px;text-transform:uppercase;
-      display:inline-block;
-      padding:8px 20px;
-      background:rgba(255,255,255,0.03);
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,0.05);
-    }
-
-    h1{
-      font-size:clamp(36px,7vw,72px);
-      margin:16px 0;font-weight:800;
-      background:linear-gradient(135deg,var(--red),var(--blue),var(--red));
-      background-size:200% 200%;
-      -webkit-background-clip:text;background-clip:text;
-      -webkit-text-fill-color:transparent;
-      letter-spacing:-0.02em;
-      animation:gradientShift 6s ease infinite;
-      position:relative;
-      display:inline-block;
-    }
-
-    h1::after{
-      content:'';position:absolute;bottom:-8px;left:50%;
-      transform:translateX(-50%);width:60%;height:3px;
-      background:linear-gradient(90deg,transparent,var(--red),var(--blue),transparent);
-      background-size:200% 100%;
-      border-radius:999px;opacity:0.8;
-      animation:knight 3s linear infinite alternate;
-    }
-
-    @keyframes knight{
-      0%{background-position:0% 50%}
-      100%{background-position:100% 50%}
-    }
-
-    @keyframes gradientShift{
-      0%,100%{background-position:0% 50%}
-      50%{background-position:100% 50%}
-    }
-
-    .lead{
-      color:#c5c5c5;max-width:680px;margin:24px auto 40px;
-      font-size:17px;line-height:1.7;font-weight:400;
-    }
-
-    /* Enhanced form */
-    .notify{margin-top:32px}
-    .form-row{
-      display:flex;gap:14px;align-items:stretch;
-      justify-content:center;flex-wrap:wrap;
-      max-width:600px;margin:0 auto;
-    }
-    
-    .email{
-      flex:1;min-width:260px;padding:18px 26px;
-      border-radius:var(--radius);
-      border:1px solid rgba(255,255,255,0.08);
-      background:rgba(255,255,255,0.04);
-      color:#fff;font-size:15px;font-weight:500;
-      transition:all 0.3s ease;
-      outline:none;
-    }
-    
-    .email:focus{
-      border-color:var(--red);
-      background:rgba(255,255,255,0.08);
-      box-shadow:0 0 0 3px rgba(211,47,47,0.1),
-                 0 8px 24px rgba(0,0,0,0.3);
-      transform:translateY(-1px);
-    }
-
-    .email::placeholder{color:#666}
-
-    .cta{
-      padding:18px 36px;border-radius:var(--radius);border:none;
-      background:linear-gradient(135deg,var(--red),var(--blue));
-      background-size:200% 200%;
-      color:#fff;font-weight:700;cursor:pointer;
-      font-size:15px;letter-spacing:0.5px;
-      transition:all 0.3s ease;
-      box-shadow:0 8px 24px rgba(211,47,47,0.4);
-      position:relative;overflow:hidden;
-    }
-
-    .cta:disabled{
-      opacity:0.6;
-      cursor:not-allowed;
-    }
-
-    .cta::before{
-      content:'';position:absolute;inset:0;
-      background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent);
-      transform:translateX(-100%);
-      transition:transform 0.5s ease;
-    }
-
-    .cta:hover:not(:disabled){
-      transform:translateY(-2px);
-      box-shadow:0 12px 32px rgba(211,47,47,0.6);
-      background-position:100% 0;
-    }
-
-    .cta:hover:not(:disabled)::before{transform:translateX(100%)}
-    .cta:active:not(:disabled){transform:translateY(0)}
-
-    /* Success and error messages */
-    .success, .error{
-      display:none;margin-top:20px;padding:14px 28px;
-      border-radius:999px;
-      font-weight:600;font-size:15px;
-      backdrop-filter:blur(10px);
-      animation:messagePop 0.5s cubic-bezier(0.68,-0.55,0.265,1.55);
-    }
-    
-    .success{
-      border:1px solid rgba(76,175,80,0.3);
-      color:#9be29b;
-      background:rgba(76,175,80,0.1);
-    }
-    
-    .error{
-      border:1px solid rgba(211,47,47,0.3);
-      color:#ff9b9b;
-      background:rgba(211,47,47,0.1);
-    }
-    
-    .success.show, .error.show{display:inline-block}
-
-    @keyframes messagePop{
-      0%{opacity:0;transform:scale(0.8) translateY(10px)}
-      100%{opacity:1;transform:scale(1) translateY(0)}
-    }
-
-    /* Social links with hover effects */
-    .meta{
-      display:flex;gap:16px;align-items:center;
-      justify-content:center;margin-top:32px;flex-wrap:wrap;z-index:2;position:relative;
-    }
-    
-    .social{display:flex;gap:12px}
-    .social a{
-      display:inline-flex;align-items:center;justify-content:center;
-      width:64px;height:64px;border-radius:14px;
-      background:var(--glass-strong);
-      border:1px solid rgba(255,255,255,0.08);
-      color:#fff;text-decoration:none;font-size:20px;
-      transition:all 0.3s ease;
-      position:relative;overflow:hidden;
-      /* make sure icons don't overlap when space is tight */
-      flex: 0 0 auto;
-      margin: 0;
-    }
-
-    .social a::before{
-      content:'';position:absolute;inset:0;
-      background:linear-gradient(135deg,var(--red),var(--blue));
-      opacity:0;transition:opacity 0.3s ease;
-    }
-
-    .social a:hover{
-      transform:translateY(-4px) scale(1.05);
-      border-color:transparent;
-      box-shadow:0 8px 20px rgba(211,47,47,0.4);
-    }
-
-    .social a:hover::before{opacity:1}
-    .social a span{position:relative;z-index:1}
-
-    /* Social icon images */
-    .social a img{
-      width:32px;height:32px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));
-    }
-
-    /* QR indicator with pulse effect */
-    .qr-indicator{
-      position:fixed;right:24px;top:24px;
-      padding:12px 20px;border-radius:999px;
-      background:rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
-      color:var(--muted);font-size:13px;font-weight:600;
-      z-index:10;backdrop-filter:blur(10px);
-      animation:indicatorFade 0.6s ease;
-      max-width: calc(100% - 32px);
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+    * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0
     }
 
-    .qr-indicator::before{
-      content:'';position:absolute;inset:-2px;
-      border-radius:999px;
-      background:linear-gradient(135deg,var(--red),var(--blue));
-      opacity:0.3;z-index:-1;
-      animation:pulse 2s ease infinite;
+    html,
+    body {
+      height: 100%;
+      overflow: hidden
     }
 
-    @keyframes pulse{
-      0%,100%{opacity:0.3;transform:scale(1)}
-      50%{opacity:0.6;transform:scale(1.05)}
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Reveal animations */
-    .reveal{
-      opacity:0;transform:translateY(30px);
-      animation:reveal 0.8s cubic-bezier(0.22,1,0.36,1) forwards;
-    }
-    .reveal.d1{animation-delay:0.1s}
-    .reveal.d2{animation-delay:0.2s}
-    .reveal.d3{animation-delay:0.3s}
-    .reveal.d4{animation-delay:0.4s}
-
-    @keyframes reveal{
-      to{opacity:1;transform:translateY(0)}
+    /* Background Slider */
+    .hero-slider {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
     }
 
-    @keyframes indicatorFade{
-      from{opacity:0;transform:translateX(20px)}
-      to{opacity:1;transform:translateX(0)}
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: top center;
+      opacity: 0;
+      will-change: transform, opacity;
     }
 
-    /* Responsive */
-    @media(max-width:768px){
-      .page{padding:80px 20px 40px}
-      .card{padding:40px 28px;border-radius:24px}
-      .logo{max-width:280px}
-      h1{font-size:clamp(32px,8vw,48px)}
-      .lead{font-size:16px}
-      .form-row{flex-direction:column}
-      .email{min-width:100%}
-      .qr-indicator{
-        right:50%;top:16px;
-        transform:translateX(50%);
-        font-size:11px;padding:8px 14px;
-        max-width:calc(100% - 32px);
+    /* 
+       Slider Animation: "automatically sliding right to left after 5s"
+       This implies a carousel transition. 
+       Total Cycle: 10s (2 slides * 5s).
+       
+       Slide 1:
+       0% - 40%: Visible, centered.
+       45% - 50%: Slides out Left (-100%).
+       50% - 90%: Hidden (Wait Right).
+       95% - 100%: Slides in from Right.
+    */
+    .slide:nth-child(1) {
+      background-image: url('assets/images/hero-1.png');
+      animation: carousel1 10s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .slide:nth-child(2) {
+      background-image: url('assets/images/hero-2.png');
+      animation: carousel2 10s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes carousel1 {
+      0% {
+        transform: translateX(0);
+        opacity: 1;
+        z-index: 1;
       }
-      .social a{width:56px;height:56px}
-      .social a img{width:28px;height:28px}
+
+      45% {
+        transform: translateX(0);
+        opacity: 1;
+        z-index: 1;
+      }
+
+      50% {
+        transform: translateX(-100%);
+        opacity: 1;
+        z-index: 1;
+      }
+
+      50.01% {
+        transform: translateX(100%);
+        opacity: 0;
+        z-index: 0;
+      }
+
+      95% {
+        transform: translateX(100%);
+        opacity: 1;
+        z-index: 0;
+      }
+
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+        z-index: 1;
+      }
     }
 
-    @media(max-width:480px){
-      .page{padding:80px 16px 40px}
-      .card{padding:32px 20px}
-      .tag{font-size:11px;padding:6px 16px}
-      .qr-indicator{font-size:10px;padding:6px 12px}
-      .social a{width:50px;height:50px}
-      .social a img{width:24px;height:24px}
+    @keyframes carousel2 {
+      0% {
+        transform: translateX(100%);
+        opacity: 1;
+        z-index: 0;
+      }
+
+      45% {
+        transform: translateX(100%);
+        opacity: 1;
+        z-index: 0;
+      }
+
+      50% {
+        transform: translateX(0);
+        opacity: 1;
+        z-index: 1;
+      }
+
+      95% {
+        transform: translateX(0);
+        opacity: 1;
+        z-index: 1;
+      }
+
+      100% {
+        transform: translateX(-100%);
+        opacity: 1;
+        z-index: 1;
+      }
     }
 
-    /* Accessibility */
-    @media(prefers-reduced-motion:reduce){
-      *,*::before,*::after{
-        animation-duration:0.01ms!important;
-        animation-iteration-count:1!important;
-        transition-duration:0.01ms!important;
+    /* Dimmer overlay for text readability */
+    .overlay-dim {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1;
+    }
+
+    /* Content Overlay (Centered, Transparent) */
+    .content-wrapper {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+    }
+
+    /* --- Boxed Logo Styling (Preserved) --- */
+    .logo-box {
+      border: 3px solid var(--text-gold);
+      padding: 15px 25px;
+      margin-bottom: 5px;
+      display: inline-block;
+      backdrop-filter: blur(2px);
+      /* Slight blur to help logo pop */
+    }
+
+    .logo-top {
+      width: 180px;
+      display: block;
+      filter: invert(1) brightness(1.2);
+      mix-blend-mode: screen;
+    }
+
+    /* --- Brace styling (Preserved) --- */
+    .brace {
+      color: rgba(255, 255, 255, 0.8);
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
+      font-weight: 300;
+      margin: 10px 0 20px;
+      line-height: 1;
+      transform: scaleX(1.5);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(40px, 5vw, 64px);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-gold);
+      margin: 0 0 15px;
+      line-height: 1.1;
+      font-weight: 500;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    }
+
+    .sub-head {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+      color: #f0f0f0;
+      margin-bottom: 40px;
+      font-weight: 400;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .by-text {
+      font-size: 12px;
+      color: #ccc;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    .logo-bottom {
+      width: 140px;
+      margin-bottom: 30px;
+      filter: invert(1) hue-rotate(180deg) brightness(1.5);
+      mix-blend-mode: screen;
+    }
+
+    /* Form */
+    .notify-form {
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .input-field {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      padding: 12px 0;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.3s;
+      backdrop-filter: blur(4px);
+    }
+
+    .input-field:focus {
+      border-color: var(--text-gold);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .input-field::placeholder {
+      color: #ddd;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    .btn-submit {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      color: #eee;
+      padding: 10px 30px;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 20px;
+    }
+
+    .btn-submit:hover {
+      border-color: var(--text-gold);
+      color: var(--text-gold);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    /* Social Icons */
+    .social-icons {
+      display: flex;
+      gap: 24px;
+      margin-top: auto;
+      padding-bottom: 20px;
+    }
+
+    .social-icons a {
+      display: block;
+      width: 24px;
+      height: 24px;
+      opacity: 0.9;
+      transition: all 0.3s;
+    }
+
+    .social-icons a:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .social-icons img {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    }
+
+    .msg {
+      font-size: 12px;
+      margin-top: 10px;
+      position: absolute;
+      width: 100%;
+      bottom: -25px;
+      opacity: 0;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 1);
+    }
+
+    .msg.success {
+      color: #69f0ae;
+      opacity: 1;
+    }
+
+    .msg.error {
+      color: #ff8a80;
+      opacity: 1;
+    }
+
+    /* Mobile */
+    @media(max-width:768px) {
+      .content-wrapper {
+        padding: 60px 20px;
+        overflow-y: auto;
+      }
+
+      .brace {
+        font-size: 36px;
+        margin: 5px 0 15px;
+      }
+
+      h1 {
+        font-size: 32px;
       }
     }
   </style>
 </head>
+
 <body>
-  <div class="bg-blobs" aria-hidden="true">
-    <div class="blob a"></div>
-    <div class="blob b"></div>
-    <div class="blob c"></div>
+
+  <!-- Full Screen Background Slider -->
+  <div class="hero-slider">
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="overlay-dim"></div>
   </div>
 
-  <div class="particles" id="particles" aria-hidden="true"></div>
+  <!-- Centered Content Overlay -->
+  <div class="content-wrapper">
 
-  <div class="qr-indicator" id="qrIndicator">📱 Scanned from product</div>
+    <!-- Boxed Logo -->
+    <div class="logo-box">
+      <img src="assets/images/averin-cole.png" alt="Averin Cole" class="logo-top">
+    </div>
 
-  <main class="page" role="main">
-    <section class="shell">
-      <div class="scale-wrap">
-        <div class="card">
-        <div class="logo reveal">
-          <img src="assets/images/logo.jpg" alt="Holborn Clothing logo" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-          <div class="logo-fallback" style="display:none;">HOLBORN</div>
-        </div>
+    <h1>Coming Soon</h1>
+    <p class="sub-head">Experience the collection</p>
 
-        <div class="reveal d1">
-          <span class="tag">Premium • Minimal • Responsible</span>
-        </div>
+    <div class="by-text">By</div>
 
-        <h1 class="reveal d2">Coming Soon</h1>
-        
-        <p class="lead reveal d3">We're launching our full e‑commerce store soon. Scan your tag to learn more and sign up below to get notified on launch day.</p>
+    <!-- Holborn Logo -->
+    <img src="assets/images/holborn-logo.jpg" alt="Holborn Clothing" class="logo-bottom">
 
-        <div class="notify reveal d4">
-          <form id="notifyForm" class="form-row" action="https://formspree.io/f/meopejrd" method="POST" onsubmit="return handleSubmit(event)">
-            <input id="emailInput" class="email" type="email" name="email" placeholder="Enter your email address" aria-label="Email address" required>
-            <button class="cta" type="submit">Notify Me</button>
-          </form>
+    <!-- Form -->
+    <form class="notify-form" id="notifyForm" onsubmit="return handleSubmit(event)">
+      <input type="email" class="input-field" id="emailInput" placeholder="Enter your email address" required>
+      <button type="submit" class="btn-submit">Notify Me</button>
+      <div id="statusMsg" class="msg"></div>
+    </form>
 
-          <div id="success" class="success" role="status" aria-live="polite">
-            ✓ Thanks — we'll notify you on launch day!
-          </div>
-          
-          <div id="error" class="error" role="alert" aria-live="assertive">
-            ✗ Something went wrong. Please try again.
-          </div>
-
-          <div class="meta">
-            <div class="social">
-              <a href="https://facebook.com/holbornclothing" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Visit our Facebook page">
-                <img src="assets/images/facebook.png" alt="Facebook">
-              </a>
-              <a href="https://www.instagram.com/holb_clo?igsh=MTRpaXRjcXZqemhkbA%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Visit our Instagram page">
-                <img src="assets/images/instagram.png" alt="Instagram">
-              </a>
-              <a href="mailto:hello@holbornclothing.com" title="Email" aria-label="Send us an email">
-                <img src="assets/images/email.png" alt="Email">
-              </a>
-              <a href="https://wa.me/971564687298" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="Contact us on WhatsApp">
-                <img src="assets/images/whatsapp.png" alt="WhatsApp">
-              </a>
-            </div>
-          </div>
-        </div>
-        </div>
-      </div>
-    </section>
-  </main>
+    <!-- Social Icons -->
+    <div class="social-icons">
+      <a href="https://facebook.com/holbornclothing" target="_blank" title="Facebook">
+        <img src="assets/images/facebook.png" alt="Facebook">
+      </a>
+      <a href="https://www.instagram.com/holb_clo?igsh=MTRpaXRjcXZqemhkbA%3D%3D&utm_source=qr" target="_blank"
+        title="Instagram">
+        <img src="assets/images/instagram.png" alt="Instagram">
+      </a>
+      <a href="https://wa.me/971564687298" target="_blank" title="WhatsApp">
+        <img src="assets/images/whatsapp.png" alt="WhatsApp">
+      </a>
+      <a href="mailto:hello@holbornclothing.com" title="Email">
+        <img src="assets/images/email.png" alt="Email">
+      </a>
+    </div>
+  </div>
 
   <script>
-    // Create floating particles
-    (function createParticles(){
-      const container = document.getElementById('particles');
-      // increase particle count but be conservative on small devices
-      const isMobile = window.innerWidth <= 480;
-      const particleCount = isMobile ? 20 : 90;
-
-      // clear any existing particles (safe to call multiple times)
-      container.innerHTML = '';
-
-      for(let i = 0; i < particleCount; i++){
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-
-        // randomized horizontal position
-        particle.style.left = Math.random() * 100 + '%';
-
-        // varied sizes for depth
-        const size = Math.floor(2 + Math.random() * (isMobile ? 6 : 12)); // 2-12px
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-
-        // varied opacity for visual depth
-        const opacity = (0.2 + Math.random() * 0.6).toFixed(2);
-        particle.style.opacity = opacity;
-
-        // varied animation duration and staggered delay
-        const duration = (8 + Math.random() * 18).toFixed(1); // 8s - 26s
-        const delay = (-Math.random() * duration).toFixed(2); // negative to spread initial positions
-        particle.style.animationDuration = duration + 's';
-        particle.style.animationDelay = delay + 's';
-
-        // slight horizontal variance per particle using CSS transform translateX in keyframes; we also add a CSS variable for extra random offset
-        const offsetX = Math.floor(-40 + Math.random() * 80); // -40 to 40px
-        particle.style.setProperty('--px-offset', offsetX + 'px');
-
-        container.appendChild(particle);
-      }
-    })();
-
-    // Enhanced form submission with server integration
-    async function handleSubmit(e){
+    async function handleSubmit(e) {
       e.preventDefault();
-      const btn = e.target.querySelector('.cta');
+      const btn = e.target.querySelector('button');
       const emailInput = document.getElementById('emailInput');
       const email = emailInput.value.trim();
-      const successMsg = document.getElementById('success');
-      const errorMsg = document.getElementById('error');
+      const statusMsg = document.getElementById('statusMsg');
 
-      // Hide any previous messages
-      successMsg.classList.remove('show');
-      errorMsg.classList.remove('show');
-
-      if(!email) return false;
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if(!emailRegex.test(email)){
-        errorMsg.textContent = '✗ Please enter a valid email address.';
-        errorMsg.classList.add('show');
-        setTimeout(() => errorMsg.classList.remove('show'), 5000);
-        return false;
-      }
+      if (!email) return;
 
       btn.disabled = true;
-      btn.textContent = 'Submitting...';
+      btn.innerText = 'Sending...';
+      statusMsg.className = 'msg';
+      statusMsg.innerText = '';
 
-      // API base is configurable via a meta tag so the static site can be
-      // hosted separately from the API (e.g. GitHub Pages + Render).
-      const API_BASE = (document.querySelector('meta[name="api-base"]') || {content:''}).content.trim();
+      try {
+        const API_BASE = (document.querySelector('meta[name="api-base"]') || { content: '' }).content.trim();
+        const target = API_BASE ? API_BASE + '/api/subscribe' : '/api/subscribe';
 
-      // Get product param if present
-      const params = new URLSearchParams(location.search);
-      const product = params.get('product') || null;
-      try{
-        const base = API_BASE.replace(/\/$/, '');
-
-        // If the form has an action (e.g. Formspree) prefer posting to that.
-        const form = document.getElementById('notifyForm');
-        const target = form && form.action ? form.action : (base ? base + '/api/subscribe' : '/api/subscribe');
-
-        let resp;
-        // If posting to an external form endpoint (Formspree) use FormData so
-        // the provider receives fields as a normal form submission.
-        if(form && form.action && form.action.startsWith('http')){
-          const fd = new FormData();
-          fd.append('email', email);
-          if(product) fd.append('product', product);
-          resp = await fetch(target, { method: 'POST', body: fd });
-        } else {
-          resp = await fetch(target, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, product })
-          });
-        }
-
-        if(!resp.ok){
-          const err = await resp.json().catch(()=>({message:'Server error'}));
-          throw new Error(err.message || 'Server error');
-        }
+        const resp = await fetch(target, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
 
         const data = await resp.json();
-        if(data && data.success){
-          successMsg.classList.add('show');
+
+        if (resp.ok && data.success) {
+          statusMsg.innerText = 'Thanks! We will be in touch.';
+          statusMsg.classList.add('success');
           emailInput.value = '';
-          setTimeout(() => successMsg.classList.remove('show'), 5000);
         } else {
-          throw new Error(data && data.message ? data.message : 'Subscription failed');
+          throw new Error(data.message || 'Error');
         }
-      }catch(err){
-        console.error('Subscription error', err);
-        errorMsg.textContent = '✗ ' + (err.message || 'Something went wrong.');
-        errorMsg.classList.add('show');
-        setTimeout(() => errorMsg.classList.remove('show'), 5000);
-      }finally{
+      } catch (err) {
+        console.error(err);
+        statusMsg.innerText = 'Something went wrong. Please try again.';
+        statusMsg.classList.add('error');
+      } finally {
         btn.disabled = false;
-        btn.textContent = 'Notify Me';
+        btn.innerText = 'NOTIFY ME';
       }
-
-      return false;
     }
-
-    // QR product tracking
-    (function(){
-      const params = new URLSearchParams(location.search);
-      const product = params.get('product');
-      const indicator = document.getElementById('qrIndicator');
-      
-      if(product){
-        // Sanitize product parameter to prevent XSS
-        const sanitized = document.createElement('div');
-        sanitized.textContent = product;
-        indicator.innerHTML = '📱 Product: <strong>' + sanitized.innerHTML + '</strong>';
-        
-        // Track product view (replace with actual analytics)
-        console.log('Product viewed:', product);
-      } else {
-        indicator.textContent = '📱 Scan product QR for details';
-      }
-    })();
-
-    // Add subtle parallax effect on mouse move (reduced intensity to avoid layout shift)
-    document.addEventListener('mousemove', (e) => {
-      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      const cards = document.querySelectorAll('.card');
-      const x = e.clientX / window.innerWidth;
-      const y = e.clientY / window.innerHeight;
-
-      // smaller multipliers => smaller rotation angles (keeps layout stable)
-      const maxAngle = 6; // degrees
-
-      cards.forEach(card => {
-        const rotY = (x - 0.5) * maxAngle; // left/right
-        const rotX = (y - 0.5) * maxAngle; // up/down
-        card.style.transform = `perspective(1000px) rotateY(${rotY}deg) rotateX(${-rotX}deg)`;
-      });
-    });
-
-    // Fit content to viewport (no scrolling)
-    (function(){
-      const wrap = document.querySelector('.scale-wrap');
-      const card = document.querySelector('.card');
-      if(!wrap || !card) return;
-
-      function fit(){
-        wrap.style.transform = 'none';
-
-        const cw = card.offsetWidth;
-        const ch = card.offsetHeight;
-
-        const marginW = 40;
-        const marginTop = window.innerWidth <= 768 ? 80 : 40;
-        const marginH = marginTop + 40;
-
-        const maxW = Math.max(100, window.innerWidth - marginW);
-        const maxH = Math.max(100, window.innerHeight - marginH);
-
-        const scale = Math.min(1, maxW / Math.max(1, cw), maxH / Math.max(1, ch));
-
-        wrap.style.transform = `scale(${scale})`;
-      }
-
-      let resizeTimeout;
-      function onResize(){
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(fit, 80);
-      }
-
-      window.addEventListener('load', fit);
-      window.addEventListener('resize', onResize);
-      window.addEventListener('orientationchange', onResize);
-
-      fit();
-    })();
   </script>
 </body>
+
 </html>
