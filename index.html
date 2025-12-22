@@ -171,20 +171,20 @@
       text-align: center;
       padding: 30px;
       padding-top: 60px;
+      padding-bottom: 90px;
     }
 
-    /* --- Boxed Logo Styling (Preserved) --- */
+    /* --- Boxed Logo Styling (Preserved) 
     .logo-box {
       border: 3px solid var(--text-gold);
       padding: 15px 25px;
       margin-bottom: 5px;
       display: inline-block;
       backdrop-filter: blur(10px);
-      /* Stronger blur for glass effect */
       background: rgba(255, 255, 255, 0.15);
-      /* "Smoke" / glass effect */
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
+    --- */
 
     .logo-top {
       width: 180px;
@@ -334,19 +334,38 @@
     }
 
     /* Mobile */
+    /* Mobile */
     @media(max-width:768px) {
       .content-wrapper {
-        padding: 60px 20px;
+        /* Keep top padding, side padding, and match bottom padding to desktop preference */
+        padding: 60px 20px 90px 20px;
         overflow-y: auto;
       }
 
-      .brace {
-        font-size: 36px;
-        margin: 5px 0 15px;
+      .logo-top {
+        width: 140px;
+      }
+
+      .logo-bottom {
+        width: 110px;
       }
 
       h1 {
         font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .sub-head {
+        font-size: 20px;
+      }
+
+      .input-field {
+        font-size: 13px;
+      }
+
+      .btn-submit {
+        font-size: 10px;
+        padding: 10px 25px;
       }
     }
   </style>
